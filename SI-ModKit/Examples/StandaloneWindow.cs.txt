@@ -1,0 +1,34 @@
+// Paste this class into your OWN Software Inc. source mod.
+// Also copy DevKit/UI.cs and DevKit/UIWindow.cs into that mod.
+// Call Open() after WindowManager becomes available (from your mod's game lifecycle).
+// On deactivation/shutdown, call SIModKit.UI.DestroyAll().
+
+public static class ModKitStandaloneExample
+{
+    private static SIModKit.UIWindow window;
+
+    public static void Open()
+    {
+        if (window != null && window.NativeWindow != null)
+        {
+            window.Show();
+            return;
+        }
+
+        window = SIModKit.UI.CreateWindow("Example Settings", 540, 330);
+        window.SetContentMargin(14);
+        window.SetResizable(false);
+        window.AddHeading("My mod settings");
+        UnityEngine.UI.InputField nameField = window.AddTextBox("Enter project name");
+        UnityEngine.UI.Toggle alerts = window.AddCheckbox("Enable alerts", true);
+        window.AddButton("Apply", () =>
+        {
+            string name = nameField == null ? "" : nameField.text;
+            bool enabled = alerts != null && alerts.isOn;
+            UnityEngine.Debug.Log("Example settings: " + name + " | alerts=" + enabled);
+            // Replace this diagnostic logging with your mod's application logic.
+        });
+        window.AddButton("Close", () => window.Hide());
+        window.Show();
+    }
+}
